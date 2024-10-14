@@ -3,81 +3,94 @@ import { Link } from "react-router-dom";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 const Books = () => {
+  // States to store books, loading state, wishlist, search term, selected genre, and pagination
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // Pagination state
-  const booksPerPage = 5; // Number of books per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 5; // Number of books per page for pagination
 
+  // Fetch books data and wishlist from localStorage on component mount
   useEffect(() => {
+    // Retrieve wishlist from local storage or initialize as an empty array
     const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(storedWishlist);
 
+    // Fetch books from the Gutendex API
     fetch("https://gutendex.com/books")
       .then((response) => response.json())
       .then((data) => {
-        setBooks(data.results);
+        setBooks(data.results); // Store fetched books in state
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err); // Handle errors during fetch
       })
       .finally(() => {
-        setLoading(false);
+        setLoading(false); // Stop the loading spinner after fetch is complete
       });
   }, []);
 
+  // Function to add/remove a book from the wishlist
   const toggleWishlist = (id) => {
     setWishlist((prevWishlist) => {
       const updatedWishlist = prevWishlist.includes(id)
-        ? prevWishlist.filter((bookId) => bookId !== id)
-        : [...prevWishlist, id];
+        ? prevWishlist.filter((bookId) => bookId !== id) // Remove book from wishlist if already added
+        : [...prevWishlist, id]; // Add book to wishlist if not already there
 
+      // Save updated wishlist to local storage
       localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
       return updatedWishlist;
     });
   };
 
-  // Get unique genres/topics for filtering
+  // Get all unique genres from the books data for the genre dropdown
   const genres = [...new Set(books.flatMap((book) => book.subjects))];
 
-  // Filter books based on search term and selected genre
+  // Filter books based on the search term and selected genre
   const filteredBooks = books.filter((book) => {
     const matchesSearchTerm = book.title
       .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      .includes(searchTerm.toLowerCase()); // Case-insensitive search for books by title
     const matchesGenre = selectedGenre
-      ? book.subjects.includes(selectedGenre)
-      : true;
+      ? book.subjects.includes(selectedGenre) // Filter by selected genre
+      : true; // Show all if no genre is selected
     return matchesSearchTerm && matchesGenre;
   });
 
-  // Pagination logic
+  // Calculate total pages for pagination based on the filtered books
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+  
+  // Calculate the start and end index of the books to display on the current page
   const startIndex = (currentPage - 1) * booksPerPage;
   const currentBooks = filteredBooks.slice(startIndex, startIndex + booksPerPage);
 
+  // Function to go to the next page
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
 
+  // Function to go to the previous page
   const goToPreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
 
+  // Function to set the current page to a specific number
   const setPage = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   return (
     <div className="container mx-auto px-4">
+      {/* Search bar and genre dropdown */}
       <div className="flex justify-between mt-10 items-center w-full ml-8 mb-4 space-x-4">
         <div className="w-2/3">
+          {/* Input field for searching books by title */}
           <input
             type="text"
             placeholder="Search for a book..."
@@ -87,6 +100,7 @@ const Books = () => {
           />
         </div>
         <div className="w-1/3">
+          {/* Dropdown for selecting a genre */}
           <select
             value={selectedGenre}
             onChange={(e) => setSelectedGenre(e.target.value)}
@@ -102,51 +116,66 @@ const Books = () => {
         </div>
       </div>
 
+      {/* Display the number of books in the current view */}
       <h1 className="text-2xl font-bold my-4 text-center">
         Book List: {currentBooks.length}
       </h1>
 
+      {/* Show loading spinner while data is being fetched */}
       {loading ? (
         <div className="flex justify-center items-center h-48">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Display the current page of books */}
           {currentBooks.length > 0 ? (
             currentBooks.map((book) => (
               <div
                 key={book.id}
-                className="border rounded-lg p-4 shadow-md transition-transform transform hover:scale-105"
+                className="relative border rounded-lg p-6 shadow-lg transform transition-all hover:scale-105 hover:shadow-2xl bg-white"
               >
-                <Link to={`/details/${book.id}`}>
-                  <img
-                    src={book.formats["image/jpeg"]}
-                    alt={book.title}
-                    className="w-full h-48 object-cover rounded-md mb-2"
-                  />
-                  <h2 className="text-lg font-semibold">{book.title}</h2>
-                  <p className="text-gray-700">
-                    Author: {book.authors.length > 0 ? book.authors[0].name : "Unknown"}
-                  </p>
-                  <p className="text-gray-600">
-                    Genre: {book.subjects.join(", ") || "N/A"}
-                  </p>
-                  <p className="text-gray-500">ID: {book.id}</p>
-                </Link>
+                {/* Wishlist button with heart icon */}
                 <button
                   onClick={() => toggleWishlist(book.id)}
-                  className={`mt-2 p-2 rounded-full ${
+                  className={`absolute top-2 right-2 p-2 rounded-full ${
                     wishlist.includes(book.id)
                       ? "bg-red-500 text-white"
                       : "bg-gray-200 text-gray-700"
                   }`}
                 >
                   {wishlist.includes(book.id) ? (
-                    <AiFillHeart className="inline" />
+                    <AiFillHeart className="text-lg" />
                   ) : (
-                    <AiOutlineHeart className="inline" />
+                    <AiOutlineHeart className="text-lg" />
                   )}
                 </button>
+
+                {/* Book details link */}
+                <Link to={`/details/${book.id}`}>
+                  {/* Book cover */}
+                  <img
+                    src={book.formats["image/jpeg"]}
+                    alt={book.title}
+                    className="w-full h-48 object-contain rounded-md mb-4"
+                  />
+                  {/* Book title */}
+                  <h2 className="text-lg font-semibold mb-2 text-center">
+                    {book.title}
+                  </h2>
+                  {/* Book author */}
+                  <p className="text-gray-700 font-semibold text-center">
+                    Author: {book.authors.length > 0 ? book.authors[0].name : "Unknown"}
+                  </p>
+                  {/* Book genres (show up to 3) */}
+                  <p className="text-gray-600 text-center mt-1">
+                    Genres: {book.subjects.slice(0, 3).join(", ") || "N/A"}
+                  </p>
+                  {/* Book ID */}
+                  <p className="text-gray-600 text-center">
+                    ID: {book.id}
+                  </p>
+                </Link>
               </div>
             ))
           ) : (
@@ -155,7 +184,7 @@ const Books = () => {
         </div>
       )}
 
-      {/* Pagination Controls */}
+      {/* Pagination controls */}
       <div className="flex justify-center mt-8">
         <button
           onClick={goToPreviousPage}
@@ -165,6 +194,7 @@ const Books = () => {
           Previous
         </button>
 
+        {/* Page number buttons */}
         {Array.from({ length: totalPages }, (_, index) => (
           <button
             key={index + 1}
