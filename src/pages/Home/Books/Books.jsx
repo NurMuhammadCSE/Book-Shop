@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 const Books = () => {
-  // States to store books, loading state, wishlist, search term, selected genre, and pagination
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
@@ -12,7 +11,7 @@ const Books = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 5; // Number of books per page for pagination
 
-  // Fetch books data and wishlist from localStorage on component mount
+  // Fetch books data and wishlist from localStorage
   useEffect(() => {
     // Retrieve wishlist from local storage or initialize as an empty array
     const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -23,48 +22,61 @@ const Books = () => {
       .then((response) => response.json())
       .then((data) => {
         setBooks(data.results); // Store fetched books in state
+        setLoading(false);
       })
       .catch((err) => {
-        console.log(err); // Handle errors during fetch
-      })
-      .finally(() => {
-        setLoading(false); // Stop the loading spinner after fetch is complete
+        console.log(err);
       });
   }, []);
 
   // Function to add/remove a book from the wishlist
-  const toggleWishlist = (id) => {
+  function toggleWishlist(bookId) {
     setWishlist((prevWishlist) => {
-      const updatedWishlist = prevWishlist.includes(id)
-        ? prevWishlist.filter((bookId) => bookId !== id) // Remove book from wishlist if already added
-        : [...prevWishlist, id]; // Add book to wishlist if not already there
-
-      // Save updated wishlist to local storage
+      let updatedWishlist;
+      if (prevWishlist.includes(bookId)) {
+        // Remove book from wishlist if already added
+        updatedWishlist = prevWishlist.filter((id) => id !== bookId);
+      } else {
+        // Add book to wishlist if not already there
+        updatedWishlist = [...prevWishlist, bookId];
+      }
       localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
       return updatedWishlist;
     });
-  };
+  }
 
   // Get all unique genres from the books data for the genre dropdown
   const genres = [...new Set(books.flatMap((book) => book.subjects))];
 
   // Filter books based on the search term and selected genre
+
+  // Step 1: Start by filtering the books based on the search term and genre
   const filteredBooks = books.filter((book) => {
-    const matchesSearchTerm = book.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase()); // Case-insensitive search for books by title
-    const matchesGenre = selectedGenre
-      ? book.subjects.includes(selectedGenre) // Filter by selected genre
-      : true; // Show all if no genre is selected
+    // Step 2: Convert the book title and the search term to lowercase
+    const lowerCaseTitle = book.title.toLowerCase();
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    // Step 3: Check if the search term matches any part of the book title
+    const matchesSearchTerm = lowerCaseTitle.includes(lowerCaseSearchTerm);
+
+    // Step 4: If a genre is selected (selectedGenre is not empty),
+    let matchesGenre = true; // Default to true (no genre filtering)
+    if (selectedGenre) {
+      matchesGenre = book.subjects.includes(selectedGenre);
+    }
+    // Step 5: Return true if both conditions (search term and genre) are met
     return matchesSearchTerm && matchesGenre;
   });
 
   // Calculate total pages for pagination based on the filtered books
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
-  
+
   // Calculate the start and end index of the books to display on the current page
   const startIndex = (currentPage - 1) * booksPerPage;
-  const currentBooks = filteredBooks.slice(startIndex, startIndex + booksPerPage);
+  const currentBooks = filteredBooks.slice(
+    startIndex,
+    startIndex + booksPerPage
+  );
 
   // Function to go to the next page
   const goToNextPage = () => {
@@ -124,7 +136,7 @@ const Books = () => {
       {/* Show loading spinner while data is being fetched */}
       {loading ? (
         <div className="flex justify-center items-center h-48">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#1c2841]"></div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -165,16 +177,15 @@ const Books = () => {
                   </h2>
                   {/* Book author */}
                   <p className="text-gray-700 font-semibold text-center">
-                    Author: {book.authors.length > 0 ? book.authors[0].name : "Unknown"}
+                    Author:{" "}
+                    {book.authors.length > 0 ? book.authors[0].name : "Unknown"}
                   </p>
                   {/* Book genres (show up to 3) */}
                   <p className="text-gray-600 text-center mt-1">
                     Genres: {book.subjects.slice(0, 3).join(", ") || "N/A"}
                   </p>
                   {/* Book ID */}
-                  <p className="text-gray-600 text-center">
-                    ID: {book.id}
-                  </p>
+                  <p className="text-gray-600 text-center">ID: {book.id}</p>
                 </Link>
               </div>
             ))
@@ -200,7 +211,9 @@ const Books = () => {
             key={index + 1}
             onClick={() => setPage(index + 1)}
             className={`mx-1 p-2 rounded ${
-              currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-300"
+              currentPage === index + 1
+                ? "bg-[#1c2841] text-white"
+                : "bg-gray-300"
             }`}
           >
             {index + 1}

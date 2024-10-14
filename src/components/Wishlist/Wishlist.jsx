@@ -40,7 +40,7 @@ const Wishlist = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-48">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#1c2841]"></div>
         </div>
       ) : (
         <div>
@@ -78,7 +78,7 @@ const Wishlist = () => {
       )}
 
       <div className="mt-8 text-center">
-        <Link to="/" className="bg-blue-500 text-white px-4 py-2 rounded">
+        <Link to="/" className="bg-[#1c2841] text-white px-4 py-2 rounded">
           Back to Books
         </Link>
       </div>
