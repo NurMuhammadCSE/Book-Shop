@@ -1,14 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Navbar({ onSearch }) {
+function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleChange = (e) => {
-    setSearchTerm(e.target.value);
-    onSearch(e.target.value);
-  };
 
   return (
     <nav className="bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md p-4">
@@ -20,16 +14,6 @@ function Navbar({ onSearch }) {
           </Link>
         </div>
 
-        {/* Search Bar - Hidden on Mobile */}
-        <div className="hidden md:flex items-center w-full max-w-md ml-8">
-          <input
-            type="text"
-            placeholder="Search for books..."
-            value={searchTerm}
-            onChange={handleChange}
-            className="w-full px-4 py-2 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
-        </div>
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6 text-white">
@@ -82,16 +66,7 @@ function Navbar({ onSearch }) {
                 Wishlist
               </Link>
             </li>
-            {/* Search bar on mobile */}
-            <li>
-              <input
-                type="text"
-                placeholder="Search for books..."
-                value={searchTerm}
-                onChange={handleChange}
-                className="w-full px-4 py-2 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-              />
-            </li>
+            
           </ul>
         </div>
       )}
