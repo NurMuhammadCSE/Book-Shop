@@ -2,15 +2,14 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 mt-10 text-white py-8">
+    <footer className="bg-[#1c2841] mt-10 text-white py-8">
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Description */}
           <div className="mb-4 md:mb-0">
             <h3 className="text-lg font-bold">Gutenberg Books</h3>
             <p className="text-gray-400">
-              Explore a vast collection of books from various genres. Join us in
-              celebrating the love of literature!
+              Explore a vast collection of books from various genres.
             </p>
           </div>
 

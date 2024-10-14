@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const BookDetails = () => {
   const { id } = useParams(); // Get the book ID from the URL
@@ -15,7 +16,7 @@ const BookDetails = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setBook(data);
       })
       .catch((err) => {
@@ -41,14 +42,22 @@ const BookDetails = () => {
   const getAuthorInfo = (authors) => {
     if (authors.length > 0) {
       const { name, birth_year, death_year } = authors[0];
-      return `${name} (Born: ${birth_year || "N/A"}, Died: ${death_year || "N/A"})`;
+      return `${name} (Born: ${birth_year || "N/A"}, Died: ${
+        death_year || "N/A"
+      })`;
     }
     return "Unknown Author";
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-6 animate-fade-in">{book.title}</h1>
+      <Helmet>
+        <title>{book.title}</title>
+      </Helmet>
+
+      <h1 className="text-3xl font-bold text-center mb-6 animate-fade-in">
+        {book.title}
+      </h1>
 
       <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg p-6 animate-slide-up">
         <img

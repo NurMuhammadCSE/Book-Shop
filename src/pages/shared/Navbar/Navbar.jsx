@@ -5,7 +5,7 @@ function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md p-4">
+    <nav className="bg-[#1c2841] shadow-md p-4">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="text-white text-2xl font-bold">
@@ -13,7 +13,6 @@ function Navbar() {
             Gutenberg
           </Link>
         </div>
-
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6 text-white">
@@ -66,7 +65,6 @@ function Navbar() {
                 Wishlist
               </Link>
             </li>
-            
           </ul>
         </div>
       )}

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 
 const Wishlist = () => {
@@ -30,6 +31,9 @@ const Wishlist = () => {
 
   return (
     <div className="container mx-auto px-4">
+      <Helmet>
+        <title>Wishlist Books</title>
+      </Helmet>
       <h1 className="text-2xl font-bold my-4 text-center">
         Wishlist: {books.length} books
       </h1>
@@ -51,17 +55,17 @@ const Wishlist = () => {
                     <img
                       src={book.formats["image/jpeg"]}
                       alt={book.title}
-                      className="w-full h-48 object-cover rounded-md mb-2"
+                      className="w-full h-48 object-contain rounded-md mb-2"
                     />
                     <h2 className="text-lg font-semibold">{book.title}</h2>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 font-semibold">
                       Author:{" "}
                       {book.authors.length > 0
                         ? book.authors[0].name
                         : "Unknown"}
                     </p>
                     <p className="text-gray-600">
-                      Genre: {book.subjects.join(", ") || "N/A"}
+                      Genre: {book.subjects.slice(0, 3).join(", ") || "N/A"}
                     </p>
                   </Link>
                 </div>

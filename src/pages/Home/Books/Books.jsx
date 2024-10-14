@@ -88,7 +88,7 @@ const Books = () => {
   return (
     <div className="container mx-auto px-4">
       {/* Search bar and genre dropdown */}
-      <div className="flex justify-between mt-10 items-center w-full ml-8 mb-4 space-x-4">
+      <div className="flex justify-between mt-10 items-center w-full mb-4 space-x-4">
         <div className="w-2/3">
           {/* Input field for searching books by title */}
           <input
