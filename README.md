@@ -1,5 +1,8 @@
 # Gutenberg
 
+Check out live demo:
+**[Live Link](https://gutenberg-books.vercel.app/)**
+
 Gutenberg is a web application designed for book enthusiasts to explore a vast collection of books, manage their wishlist, and discover new genres. The application features a responsive design and user-friendly navigation, making it easy to browse and enjoy literature from various authors.
 
 ## Features
@@ -35,11 +38,11 @@ To run this project locally, follow these steps:
 3. **Install dependencies**:
 
    ```bash
-      npm install
+   npm install
    ```
 
 4. **Start the development server**:
 
    ```bash
-      npm run dev
+   npm run dev
    ```

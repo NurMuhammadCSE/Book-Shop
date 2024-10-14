@@ -21,12 +21,6 @@ function Footer() {
             <Link to="/wishlist" className="hover:text-gray-300">
               Wishlist
             </Link>
-            <Link to="/about" className="hover:text-gray-300">
-              About Us
-            </Link>
-            <Link to="/contact" className="hover:text-gray-300">
-              Contact
-            </Link>
           </div>
         </div>
 
